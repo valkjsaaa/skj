@@ -98,7 +98,7 @@ class PKUCourse:
         # check result
         data=result.read()
         tempArr=re.findall(r'<title>(.*?)</title>',data)
-        print data
+        # print data
         if len(tempArr)>0 and tempArr[0]=='帮助-总体流程':
             self.mLogger.log("__getLoginPage2 OK")
             return True
