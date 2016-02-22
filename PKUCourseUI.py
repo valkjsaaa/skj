@@ -116,7 +116,7 @@ if __name__=='__main__':
     logger.setMaxLine(500)
     logger.setFile('errorInf')
     try:
-        pool = Pool()
+        # pool = Pool()
         ui=PKUCourseUI()
         ui.init()
         ui.welcome()

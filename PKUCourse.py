@@ -136,8 +136,8 @@ class PKUCourse:
             redirectURL= "http://elective.pku.edu.cn:80/elective2008/agent4Iaaa.jsp/../ssoLogin.do"
             payload = {
                 'appid':'syllabus',
-                'userName':'1200012727',
-                'password': 'Oncall36',
+                'userName': studentNo,
+                'password': password,
                 'randCode':'012345',
                 'smsCode':'smsCode',
                 'redirUrl': redirectURL
@@ -187,10 +187,16 @@ class PKUCourse:
             #print tempArr
 
             courseInf['index']=len(g_courseInf)
-            #print tempArr[0]
-            start=tempArr[0].index('course_seq_no=')+len('course_seq_no=')
-            end=tempArr[0].index('"',start)
-            courseInf['seq']=tempArr[0][start:end]
+            # print tempArr[0]
+            # start=tempArr[0].index('course_seq_no=')+len('course_seq_no=')
+            # end=tempArr[0].index('"',start)
+            # courseInf['seq']=tempArr[0][start:end]
+            refresh = re.findall(r"refreshLimit\('.*','.*','','.*','(.*)','.*'\)",tempArr[10])
+            confirm = re.findall(r"confirmSelect\('.*','.*','.*','.*','(.*)'\)", tempArr[10])
+            if len(refresh) >= 1:
+                courseInf['seq'] = refresh[0]
+            else:
+                courseInf['seq'] = confirm[0]
 
             start=tempArr[0].index('<span>')+len('<span>')
             end=tempArr[0].index('</span>',start)
