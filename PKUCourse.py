@@ -13,6 +13,8 @@ from HTTPConnection import HTTPConnection
 from ValidCodeAnalyzer import ValidCodeAnalyzer
 #from Logger import DebugLogger as Logger 
 from Logger import BufferLogger as Logger
+import requests
+import random
 
 class PKUCourse:
     
@@ -96,7 +98,7 @@ class PKUCourse:
         # check result
         data=result.read()
         tempArr=re.findall(r'<title>(.*?)</title>',data)
-        #print data
+        print data
         if len(tempArr)>0 and tempArr[0]=='帮助-总体流程':
             self.mLogger.log("__getLoginPage2 OK")
             return True
@@ -131,7 +133,22 @@ class PKUCourse:
             #if validCode==None:
             #    continue
             # submit student ID & password, Login
-            result = self.__getLoginPage2(password)
+            redirectURL= "http://elective.pku.edu.cn:80/elective2008/agent4Iaaa.jsp/../ssoLogin.do"
+            payload = {
+                'appid':'syllabus',
+                'userName':'1200012727',
+                'password': 'Oncall36',
+                'randCode':'012345',
+                'smsCode':'smsCode',
+                'redirUrl': redirectURL
+            }
+            r = requests.post('https://iaaa.pku.edu.cn/iaaa/oauthlogin.do', data=payload)
+            token = r.json()['token']
+            print "login token: %s"%token
+            redirect = redirectURL + "?rand=" + str(random.randint(0, 10000)) + "&token=" + token
+            print "redirectURL: %s"%redirect
+
+            result = self.__getLoginPage2(redirect)
             if result:
                 print 'login sucessfully!'
             
@@ -251,7 +268,7 @@ class PKUCourse:
         url='/elective2008/edu/pku/stu/elective/controller/supplement/validate.do?validCode='+str(validCode)
         result=self.mConnection.requestReliable(headers, params, self.mConnection.METHOD_GET, url)
         data=result.read()
-        print data
+        # print data
         if data.find('<valid>2</valid>')!=-1:
             self.mLogger.log("suc to validate!!")
             self.mLogger.log(data)                        
